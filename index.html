@@ -6,18 +6,11 @@
   <input type="color" id="pen-color" value="#000000">
   <label for="pen-thickness">Pen Thickness:</label>
   <input type="range" id="pen-thickness" min="1" max="10" value="2">
-  <label for="pen-style">Pen Style:</label>
-  <select id="pen-style">
-    <option value="solid">Solid</option>
-    <option value="dotted">Dotted</option>
-  </select>
   <br><br>
-  <input type="file" id="upload-bg" accept="image/*">
-  <label for="upload-bg">Upload Custom Background</label>
+  <input type="file" id="upload-doc" accept="image/*,application/pdf">
+  <label for="upload-doc">Upload a document to sign</label>
   <br><br>
   <button id="clear">Clear</button>
-  <button id="undo">Undo</button>
-  <button id="redo">Redo</button>
   <button id="save-png">Save as PNG</button>
   <button id="save-jpg">Save as JPG</button>
   <button id="save-pdf">Save as PDF</button>
@@ -35,8 +28,6 @@
     var signaturePad = new SignaturePad(canvas);
     var previewCanvas = document.getElementById('preview-canvas');
     var ctxPreview = previewCanvas.getContext('2d');
-    var undoStack = [];
-    var redoStack = [];
     var backgroundImage = null;
 
     // Pen color change
@@ -51,37 +42,9 @@
       signaturePad.maxWidth = lineWidth;
     });
 
-    // Pen style change
-    document.getElementById('pen-style').addEventListener('change', function () {
-      if (this.value === 'dotted') {
-        canvas.style.border = '1px dotted black';
-      } else {
-        canvas.style.border = '1px solid black';
-      }
-    });
-
     // Clear signature pad
     document.getElementById('clear').addEventListener('click', function () {
       signaturePad.clear();
-      undoStack = []; // Clear the undo history
-    });
-
-    // Undo feature
-    document.getElementById('undo').addEventListener('click', function () {
-      if (undoStack.length) {
-        redoStack.push(signaturePad.toData());
-        var lastState = undoStack.pop();
-        signaturePad.fromData(lastState);
-      }
-    });
-
-    // Redo feature
-    document.getElementById('redo').addEventListener('click', function () {
-      if (redoStack.length) {
-        undoStack.push(signaturePad.toData());
-        var nextState = redoStack.pop();
-        signaturePad.fromData(nextState);
-      }
     });
 
     // Save as PNG, JPG, PDF, SVG
@@ -124,8 +87,8 @@
       }
     }
 
-    // Upload custom background
-    document.getElementById('upload-bg').addEventListener('change', function (event) {
+    // Upload document to sign on
+    document.getElementById('upload-doc').addEventListener('change', function (event) {
       var reader = new FileReader();
       reader.onload = function (e) {
         var img = new Image();
