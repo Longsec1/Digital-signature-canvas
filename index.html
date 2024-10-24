@@ -20,6 +20,9 @@
       display: none;
       border: 2px solid gray;
     }
+    #ad-container {
+      margin: 20px 0;
+    }
   </style>
 </head>
 <body>
@@ -51,6 +54,15 @@
     <button id="save-jpg">Save as JPG</button>
     <button id="save-pdf">Save as PDF</button>
     <button id="save-svg">Save as SVG</button>
+  </div>
+
+  <!-- Ad Container -->
+  <div id="ad-container" style="display: none;">
+    <script type="text/javascript">
+      aclib.runAutoTag({
+          zoneId: '8idjy4a6ra',
+      });
+    </script>
   </div>
 
   <!-- Preview and Edit -->
@@ -102,6 +114,7 @@
     // Mouse events
     canvas.addEventListener('mousedown', function (e) {
       startDrawing(e.offsetX, e.offsetY);
+      showAd(); // Show ad after user interacts
     });
 
     canvas.addEventListener('mousemove', function (e) {
@@ -122,6 +135,7 @@
       const rect = canvas.getBoundingClientRect();
       const touch = e.touches[0];
       startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
+      showAd(); // Show ad after user interacts
     });
 
     canvas.addEventListener('touchmove', function (e) {
@@ -215,6 +229,11 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(previewCanvas, 0, 0);
     });
+
+    // Show ad after user interacts with the signature pad
+    function showAd() {
+      document.getElementById('ad-container').style.display = 'block';
+    }
   </script>
 </body>
   </html>
