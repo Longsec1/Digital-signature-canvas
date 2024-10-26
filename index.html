@@ -9,11 +9,12 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
-      overflow: hidden; /* Prevent address bar resizing */
+      overflow-y: auto; /* Enable vertical scrolling */
     }
     #signature-pad {
       border: 2px solid black;
       touch-action: none; /* Improve touch support */
+      margin-top: 10px;
     }
     .controls {
       margin: 20px 0;
@@ -37,7 +38,6 @@
 
   <!-- Signature Canvas -->
   <canvas id="signature-pad" width="300" height="200"></canvas>
-  <br><br>
 
   <!-- Controls -->
   <div class="controls">
@@ -234,4 +234,4 @@
     });
   </script>
 </body>
-      </html>
+  </html>
