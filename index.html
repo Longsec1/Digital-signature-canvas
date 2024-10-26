@@ -2,16 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>InstaSignature</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
+      overflow: hidden; /* Prevent address bar resizing */
     }
     #signature-pad {
       border: 2px solid black;
+      touch-action: none; /* Improve touch support */
     }
     .controls {
       margin: 20px 0;
@@ -216,6 +218,15 @@
         adDisplayed = true;
       }
     }
+
+    // Handle screen orientation change to prevent canvas reset
+    window.addEventListener("orientationchange", function() {
+      // Redraw background image if exists
+      if (backgroundImage) {
+        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      }
+    });
+
   </script>
 </body>
-  </html>
+    </html>
