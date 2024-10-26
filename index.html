@@ -61,7 +61,8 @@
   <div id="banner-container">
     <script type="text/javascript">
       aclib.runBanner({
-          zoneId: '8935698',
+          websiteId: '1473598',
+          zoneId: '8935698'
       });
     </script>
   </div>
@@ -79,16 +80,6 @@
     adcashScript.type = 'text/javascript';
     adcashScript.src = '//acscdn.com/script/aclib.js';
     document.head.appendChild(adcashScript);
-
-    // Initialize AutoTag
-    const autoTagScript = document.createElement('script');
-    autoTagScript.type = 'text/javascript';
-    autoTagScript.innerHTML = `
-      aclib.runAutoTag({
-          zoneId: '8idjy4a6ra',
-      });
-    `;
-    document.head.appendChild(autoTagScript);
 
     var canvas = document.getElementById('signature-pad');
     var ctx = canvas.getContext('2d');
@@ -232,4 +223,4 @@
     }
   </script>
 </body>
-      </html>
+    </html>
