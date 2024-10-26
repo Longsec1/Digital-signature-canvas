@@ -163,19 +163,25 @@
       }
     });
 
-    // Save as PNG, JPG, PDF, SVG
+    // Save as PNG, JPG, PDF, SVG with mobile compatibility
     function saveImage(format) {
+      const dataURL = canvas.toDataURL('image/' + format);
       if (format === 'pdf') {
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = dataURL;
         const pdf = new jsPDF();
         pdf.addImage(imgData, 'PNG', 0, 0);
         pdf.save('signature.pdf');
       } else {
-        const dataURL = canvas.toDataURL('image/' + format);
         const link = document.createElement('a');
         link.href = dataURL;
         link.download = `signature.${format}`;
-        link.click();
+
+        // For mobile compatibility, open in new tab if download attribute is ignored
+        if (/Android|iPhone/i.test(navigator.userAgent)) {
+          window.open(dataURL, '_blank');
+        } else {
+          link.click();
+        }
       }
     }
 
@@ -226,7 +232,6 @@
         ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
       }
     });
-
   </script>
 </body>
-    </html>
+      </html>
