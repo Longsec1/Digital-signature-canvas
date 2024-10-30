@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>InstaSignature</title>
+  <meta name="monetag" content="408bd7e0278b2a48b44f32cbbb382898">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -23,13 +24,7 @@
       display: none;
       border: 2px solid gray;
     }
-    #banner-container {
-      margin: 20px 0;
-      display: none;
-    }
   </style>
-  <!-- Include Adcash library -->
-  <script type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
 </head>
 <body>
 
@@ -61,16 +56,6 @@
     <button id="save-svg">Save as SVG</button>
   </div>
 
-  <!-- Banner Ad Container -->
-  <div id="banner-container">
-    <script type="text/javascript">
-      aclib.runBanner({
-          websiteId: '1473598',
-          zoneId: '8935698'
-      });
-    </script>
-  </div>
-
   <!-- Preview and Edit -->
   <canvas id="preview-canvas" width="300" height="200"></canvas>
   <br>
@@ -86,7 +71,6 @@
     var penColor = '#000000';
     var lineWidth = 2;
     var backgroundImage = null;
-    var adDisplayed = false;
 
     // Change pen color
     document.getElementById('pen-color').addEventListener('input', function () {
@@ -102,7 +86,6 @@
     function startDrawing(x, y) {
       isDrawing = true;
       [lastX, lastY] = [x, y];
-      showAdOnce();
     }
 
     // Draw on canvas (Mouse and Touch)
@@ -216,14 +199,6 @@
       };
       reader.readAsDataURL(event.target.files[0]);
     });
-
-    // Show Ad Function
-    function showAdOnce() {
-      if (!adDisplayed) {
-        document.getElementById('banner-container').style.display = 'block';
-        adDisplayed = true;
-      }
-    }
 
     // Handle screen orientation change to prevent canvas reset
     window.addEventListener("orientationchange", function() {
