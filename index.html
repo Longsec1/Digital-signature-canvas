@@ -65,9 +65,7 @@
   <button id="edit-preview" style="display: none;">Edit Preview</button>
 
   <!-- Monetag Banner Ad Container -->
-  <div id="ad-container">
-    <script>(function(d,z,s){s.src='https://'+d+'/400/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('vemtoutcheeg.com',8443616,document.createElement('script'))</script>
-  </div>
+  <div id="ad-container"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
   <script>
@@ -215,6 +213,22 @@
         ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
       }
     });
+
+    // Function to load ads
+    function loadAds() {
+      const adContainer = document.getElementById('ad-container');
+      adContainer.innerHTML = ''; // Clear previous ads if any
+      const adScript = document.createElement('script');
+      adScript.src = 'https://vemtoutcheeg.com/400/8443616';
+      adContainer.appendChild(adScript);
+    }
+
+    // Load ads initially
+    loadAds();
+
+    // Reload ads every 5 minutes (300000 ms)
+    setInterval(loadAds, 300000);
+
   </script>
 </body>
       </html>
