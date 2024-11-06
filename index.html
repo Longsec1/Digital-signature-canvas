@@ -80,7 +80,7 @@
   <div id="ad-container"></div>
 
   <!-- Support Us Button -->
-  <button id="support-us" onclick="window.open('https://chikraighotoops.com/4/8451955', '_blank')">Support Us</button>
+  <button id="support-us">Support Us</button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
   <script>
@@ -244,6 +244,17 @@
     // Reload ads every 5 minutes (300000 ms)
     setInterval(loadAds, 300000);
 
+    // Show interstitial ad, then proceed to support link
+    document.getElementById('support-us').addEventListener('click', function () {
+      const interstitialAdScript = document.createElement('script');
+      interstitialAdScript.src = 'https://teestoagloupaza.net/401/8473285';
+      document.body.appendChild(interstitialAdScript);
+      // Delay to allow interstitial ad to show before proceeding
+      setTimeout(function () {
+        window.open('https://chikraighotoops.com/4/8451955', '_blank');
+      }, 3000); // Adjust delay as needed
+    });
+
   </script>
 </body>
-      </html>
+                                       </html>
