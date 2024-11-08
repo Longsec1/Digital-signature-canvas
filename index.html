@@ -10,11 +10,11 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
-      overflow-y: auto; /* Enable vertical scrolling */
+      overflow-y: auto;
     }
     #signature-pad {
       border: 2px solid black;
-      touch-action: none; /* Improve touch support */
+      touch-action: none;
       margin-top: 10px;
     }
     .controls {
@@ -59,22 +59,9 @@
   </div>
 
   <div class="controls">
-    <input type="file" id="upload-doc" accept="image/png, image/jpeg, image/gif, application/pdf">
-    <label for="upload-doc">Upload a document to sign</label>
-  </div>
-
-  <div class="controls">
     <button id="clear">Clear</button>
     <button id="save-png">Save as PNG</button>
-    <button id="save-jpg">Save as JPG</button>
-    <button id="save-pdf">Save as PDF</button>
-    <button id="save-svg">Save as SVG</button>
   </div>
-
-  <!-- Preview and Edit -->
-  <canvas id="preview-canvas" width="300" height="200"></canvas>
-  <br>
-  <button id="edit-preview" style="display: none;">Edit Preview</button>
 
   <!-- Monetag Banner Ad Container -->
   <div id="ad-container"></div>
@@ -84,15 +71,14 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
   <script>
-    var canvas = document.getElementById('signature-pad');
-    var ctx = canvas.getContext('2d');
-    var isDrawing = false;
-    var lastX = 0;
-    var lastY = 0;
-    var penColor = '#000000';
-    var lineWidth = 2;
-    var backgroundImage = null;
-
+    const canvas = document.getElementById('signature-pad');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let penColor = '#000000';
+    let lineWidth = 2;
+    
     // Change pen color
     document.getElementById('pen-color').addEventListener('input', function () {
       penColor = this.value;
@@ -103,133 +89,61 @@
       lineWidth = this.value;
     });
 
-    // Start drawing on canvas (Mouse and Touch)
-    function startDrawing(x, y) {
+    // Unified event handlers using PointerEvents API
+    function startDrawing(e) {
       isDrawing = true;
-      [lastX, lastY] = [x, y];
+      const { offsetX, offsetY } = getPointerPosition(e);
+      [lastX, lastY] = [offsetX, offsetY];
     }
 
-    // Draw on canvas (Mouse and Touch)
-    function draw(x, y) {
+    function draw(e) {
       if (!isDrawing) return;
+      const { offsetX, offsetY } = getPointerPosition(e);
       ctx.strokeStyle = penColor;
       ctx.lineWidth = lineWidth;
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(lastX, lastY);
-      ctx.lineTo(x, y);
+      ctx.lineTo(offsetX, offsetY);
       ctx.stroke();
-      [lastX, lastY] = [x, y];
+      [lastX, lastY] = [offsetX, offsetY];
     }
 
-    // Mouse events
-    canvas.addEventListener('mousedown', function (e) {
-      startDrawing(e.offsetX, e.offsetY);
-    });
-
-    canvas.addEventListener('mousemove', function (e) {
-      draw(e.offsetX, e.offsetY);
-    });
-
-    canvas.addEventListener('mouseup', function () {
+    function stopDrawing() {
       isDrawing = false;
-    });
+      ctx.closePath();
+    }
 
-    canvas.addEventListener('mouseout', function () {
-      isDrawing = false;
-    });
-
-    // Touch events
-    canvas.addEventListener('touchstart', function (e) {
-      e.preventDefault(); // Prevent scrolling
+    function getPointerPosition(e) {
       const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
-    });
+      return {
+        offsetX: e.clientX - rect.left,
+        offsetY: e.clientY - rect.top
+      };
+    }
 
-    canvas.addEventListener('touchmove', function (e) {
-      e.preventDefault(); // Prevent scrolling
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      draw(touch.clientX - rect.left, touch.clientY - rect.top);
-    });
-
-    canvas.addEventListener('touchend', function () {
-      isDrawing = false;
-    });
+    // Attach PointerEvent listeners
+    canvas.addEventListener('pointerdown', startDrawing);
+    canvas.addEventListener('pointermove', draw);
+    canvas.addEventListener('pointerup', stopDrawing);
+    canvas.addEventListener('pointerout', stopDrawing);
 
     // Clear the canvas
     document.getElementById('clear').addEventListener('click', function () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (backgroundImage) {
-        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-      }
     });
 
-    // Save as PNG, JPG, PDF, SVG with mobile compatibility
-    function saveImage(format) {
-      const dataURL = canvas.toDataURL('image/' + format);
-      if (format === 'pdf') {
-        const imgData = dataURL;
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'PNG', 0, 0);
-        pdf.save('signature.pdf');
-      } else {
-        const link = document.createElement('a');
-        link.href = dataURL;
-        link.download = `signature.${format}`;
-
-        // For mobile compatibility, open in new tab if download attribute is ignored
-        if (/Android|iPhone/i.test(navigator.userAgent)) {
-          window.open(dataURL, '_blank');
-        } else {
-          link.click();
-        }
-      }
-    }
-
+    // Save as PNG
     document.getElementById('save-png').addEventListener('click', function () {
-      saveImage('png');
+      const dataURL = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'signature.png';
+      link.click();
     });
 
-    document.getElementById('save-jpg').addEventListener('click', function () {
-      saveImage('jpg');
-    });
-
-    document.getElementById('save-pdf').addEventListener('click', function () {
-      saveImage('pdf');
-    });
-
-    document.getElementById('save-svg').addEventListener('click', function () {
-      saveImage('svg');
-    });
-
-    // Upload a document to sign
-    document.getElementById('upload-doc').addEventListener('change', function (event) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = new Image();
-        img.onload = function () {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          backgroundImage = img;
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    });
-
-    // Handle screen orientation change to prevent canvas reset
-    window.addEventListener("orientationchange", function() {
-      // Redraw background image if exists
-      if (backgroundImage) {
-        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-      }
-    });
-
-    // Function to load ads
+    // Load ads function
     function loadAds() {
       const adContainer = document.getElementById('ad-container');
       adContainer.innerHTML = ''; // Clear previous ads if any
@@ -238,23 +152,15 @@
       adContainer.appendChild(adScript);
     }
 
-    // Load ads initially
     loadAds();
-
-    // Reload ads every 5 minutes (300000 ms)
     setInterval(loadAds, 300000);
 
-    // Show interstitial ad, then proceed to support link
     document.getElementById('support-us').addEventListener('click', function () {
       const interstitialAdScript = document.createElement('script');
       interstitialAdScript.src = 'https://teestoagloupaza.net/401/8473285';
       document.body.appendChild(interstitialAdScript);
-      // Delay to allow interstitial ad to show before proceeding
-      setTimeout(function () {
-        window.open('https://chikraighotoops.com/4/8451955', '_blank');
-      }, 3000); // Adjust delay as needed
+      setTimeout(() => window.open('https://chikraighotoops.com/4/8451955', '_blank'), 3000);
     });
-
   </script>
 </body>
-                                       </html>
+    </html>
